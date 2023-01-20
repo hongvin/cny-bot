@@ -65,6 +65,14 @@ client.on("ready", () => {
 client.on("message", async (msg) => {
   debug.info('MESSAGE FROM',msg.from,'->',msg.body);
 
+  if (msg.body.startsWith("!CNY")) {
+    let content = msg.body.split.substring(5);
+    createImage(content);
+    let media = await MessageMedia.fromFilePath("./message1.png");
+    await client.sendMessage(msg.from, media);
+    return;
+  }
+
   if (msg.body.includes("CNY")) {
     debug.info('[STARTING] ->',msg.from);
     let starting = new Buttons(
