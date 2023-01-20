@@ -65,7 +65,7 @@ client.on("ready", () => {
 client.on("message", async (msg) => {
   debug.info('MESSAGE FROM',msg.from,'->',msg.body);
 
-  if (msg.body.startsWith("CNY")) {
+  if (msg.body.includes("CNY")) {
     debug.info('[STARTING] ->',msg.from);
     let starting = new Buttons(
       "🙌 Thank you for checking out this bot. You can create a custom message card using this bot, or even send a customize angpow using this bot! Simply click an option below to get started.",
