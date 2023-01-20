@@ -70,7 +70,7 @@ client.on("message", async (msg) => {
     let starting = new Buttons(
       "🙌 Thank you for checking out this bot. You can create a custom message card using this bot, or even send a customize angpow using this bot! Simply click an option below to get started.",
       [
-        { body: "🎉 Create a custom message card.", id: "start-custom" },
+        { body: "🎉 Create a custom message card.", id: "start-custom" }
         // { body: "💸 Create TnG Angpow message card.", id: "start-angpow" }
       ],
       "👋 Hello! 新年快乐",
