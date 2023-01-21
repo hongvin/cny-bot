@@ -84,10 +84,11 @@ client.on("message", async (msg) => {
   if (msg.body.includes("CNY")) {
     debug.info('[STARTING] ->', msg.from);
     let starting = new Buttons(
-      "🙌 Thank you for checking out this bot. You can create a custom message card using this bot, or even send a customize angpow using this bot! Simply click an option below to get started.",
+      "🙌 Thank you for checking out this bot. You can create a custom message card using this bot, or even send a customize card with QR code using this bot! Simply click an option below to get started.",
       [
         { body: "🎉 Create a custom message card.", id: "start-custom" },
-        { body: "💸 Create TnG Angpow message card.", id: "start-angpow" }
+        { body: "💸 Create a message card with QR code.", id: "start-angpow" },
+        { body: "🤖 I want to host my own bot!", id: "start-host" }
       ],
       "👋 Hello! 新年快乐",
       "Select an option below to continue"
@@ -103,7 +104,12 @@ client.on("message", async (msg) => {
     return;
   }
   if (msg.selectedButtonId == 'start-angpow') {
-    client.sendMessage(msg.from, '*Send a TnG Angpow message card*\n\nSend me the angpow link.');
+    client.sendMessage(msg.from, '*Send a QR code message card*\n\nSend me the link of your QR code.');
+    responses[msg.from] = 'angpow';
+    return;
+  }
+  if (msg.selectedButtonId == 'start-host') {
+    client.sendMessage(msg.from, '*Host your own Whatsapp bot*\n\nDont worry! This bot is totally open-sourced! The code is at: https://github.com/hongvin/cny-bot! Give me a star if you found it useful!');
     responses[msg.from] = 'angpow';
     return;
   }
