@@ -7,6 +7,7 @@ const {
 } = require("whatsapp-web.js");
 const { createCanvas, Image, registerFont } = require("canvas");
 const fs = require("fs");
+const QRCode = require('qrcode');
 
 const log4js = require("log4js");
 
@@ -63,7 +64,7 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
-  debug.info('MESSAGE FROM',msg.from,'->',msg.body);
+  debug.info('MESSAGE FROM', msg.from, '->', msg.body);
 
   if (msg.body.startsWith("!CNY")) {
     let content = msg.body.substring(5);
@@ -72,14 +73,21 @@ client.on("message", async (msg) => {
     await client.sendMessage(msg.from, media);
     return;
   }
+  else if (msg.body.startsWith("!TNG")) {
+    let content = msg.body.substring(5);
+    createAngpow(content);
+    let media = await MessageMedia.fromFilePath("./angpow1.png");
+    await client.sendMessage(msg.from, media);
+    return;
+  }
 
   if (msg.body.includes("CNY")) {
-    debug.info('[STARTING] ->',msg.from);
+    debug.info('[STARTING] ->', msg.from);
     let starting = new Buttons(
       "🙌 Thank you for checking out this bot. You can create a custom message card using this bot, or even send a customize angpow using this bot! Simply click an option below to get started.",
       [
-        { body: "🎉 Create a custom message card.", id: "start-custom" }
-        // { body: "💸 Create TnG Angpow message card.", id: "start-angpow" }
+        { body: "🎉 Create a custom message card.", id: "start-custom" },
+        { body: "💸 Create TnG Angpow message card.", id: "start-angpow" }
       ],
       "👋 Hello! 新年快乐",
       "Select an option below to continue"
@@ -89,28 +97,29 @@ client.on("message", async (msg) => {
     return;
   }
 
-  if (msg.selectedButtonId=='start-custom'){
-    client.sendMessage(msg.from,'*Send a message card*\n\nType in the message below and the bot will create you a custom message card. Recommended to be within 1 line of words (20 Chinese characters or 40 English characters).');
+  if (msg.selectedButtonId == 'start-custom') {
+    client.sendMessage(msg.from, '*Send a message card*\n\nType in the message below and the bot will create you a custom message card. Recommended to be within 1 line of words (20 Chinese characters or 40 English characters).');
     responses[msg.from] = 'message';
-    console.log(responses);
     return;
   }
-  if (msg.selectedButtonId=='start-angpow'){
-    client.sendMessage(msg.from,'*Send a TnG Angpow message card*\n\nSend me the angpow link.');
+  if (msg.selectedButtonId == 'start-angpow') {
+    client.sendMessage(msg.from, '*Send a TnG Angpow message card*\n\nSend me the angpow link.');
     responses[msg.from] = 'angpow';
     return;
   }
 
-  if(responses[msg.from] == 'message'){
+  if (responses[msg.from] == 'message') {
     createImage(msg.body);
     let media = await MessageMedia.fromFilePath("./message1.png");
     await client.sendMessage(msg.from, media);
+    return;
   }
 
-  if(msg.selectedButtonId =='' && responses[msg.from] == 'angpow'){
+  if (responses[msg.from] == 'angpow') {
     createAngpow(msg.body);
-    let media = await MessageMedia.fromFilePath("./message1.png");
+    let media = await MessageMedia.fromFilePath("./angpow1.png");
     await client.sendMessage(msg.from, media);
+    return;
   }
 
 
@@ -141,26 +150,33 @@ function createImage(message) {
     context.font = "bold 35pt Sofia Sans";
     context.fillText(message, 100, 395);
   };
-  img.src = "./message.png";
+  img.src = "./assets/message.png";
   fs.writeFileSync(`./message1.png`, imageCanvas.toBuffer("image/png"));
 }
 
-function createAngpow(message) {
+function createAngpow(link) {
   let imageCanvas = createCanvas(1000, 1000);
+  let qrCanvas = createCanvas(335, 335);
   let context = imageCanvas.getContext("2d");
   let img = new Image();
-  let regExp = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]/g;
+
+  QRCode.toCanvas(qrCanvas, link, {
+    width: 335,
+    margin: 2,
+    color: {
+      dark: '#C30010',
+      light: '#0000'
+    }
+  }, function (error) {
+    if (error) debug.error('[QRCODE] ->', error)
+    debug.log('[QRCODE] -> Generated for link', link);
+  })
+
 
   img.onload = function () {
     context.drawImage(img, 0, 0);
-    if(regExp.test(message)){
-      context.font = "bold 35pt YRDZST";
-    }
-    else{
-    context.font = "bold 35pt Sofia Sans";
-    }
-    context.fillText(message, 100, 395);
+    context.drawImage(qrCanvas, 328, 158);
   };
-  img.src = "./message.png";
-  fs.writeFileSync(`./message1.png`, imageCanvas.toBuffer("image/png"));
+  img.src = "./assets/angpow.png";
+  fs.writeFileSync(`./angpow1.png`, imageCanvas.toBuffer("image/png"));
 }
