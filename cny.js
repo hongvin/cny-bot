@@ -101,7 +101,7 @@ client.on("message", async (msg) => {
   }
 
   if (msg.selectedButtonId == 'start-custom') {
-    client.sendMessage(msg.from, '*Send a message card*\n\nType in the message below and the bot will create you a custom message card. Recommended to be within 1 line of words (20 Chinese characters or 40 English characters).');
+    client.sendMessage(msg.from, '*Send a message card*\n\nType in the message below and the bot will create you a custom message card. Recommended to be within 2 line of words (20 Chinese characters or 50 English characters per line).');
     debug.info('[MSG CARD]');
     responses[msg.from] = 'message';
     return;
@@ -166,7 +166,7 @@ function createImage(message) {
     context.drawImage(img, 0, 0);
     context.font = "bold 35pt Sofia Sans";
     if (message.includes('\n')) {
-      context.fillText(message, 100, 345);
+      context.fillText(message, 100, 360);
     }
     else {
       context.fillText(message, 100, 395);
