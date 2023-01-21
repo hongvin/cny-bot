@@ -73,8 +73,8 @@ client.on("message", async (msg) => {
     await client.sendMessage(msg.from, media);
     return;
   }
-  else if (msg.body.startsWith("!TNG")) {
-    let content = msg.body.substring(5);
+  else if (msg.body.startsWith("!QR")) {
+    let content = msg.body.substring(4);
     createAngpow(content);
     let media = await MessageMedia.fromFilePath("./angpow1.png");
     await client.sendMessage(msg.from, media);
@@ -103,28 +103,32 @@ client.on("message", async (msg) => {
     responses[msg.from] = 'message';
     return;
   }
-  if (msg.selectedButtonId == 'start-angpow') {
+  else if (msg.selectedButtonId == 'start-angpow') {
     client.sendMessage(msg.from, '*Send a QR code message card*\n\nSend me the link of your QR code.');
     responses[msg.from] = 'angpow';
     return;
   }
-  if (msg.selectedButtonId == 'start-host') {
+  else if (msg.selectedButtonId == 'start-host') {
     client.sendMessage(msg.from, '*Host your own Whatsapp bot*\n\nDont worry! This bot is totally open-sourced! The code is at: https://github.com/hongvin/cny-bot! Give me a star if you found it useful!');
     responses[msg.from] = 'angpow';
     return;
   }
 
-  if (responses[msg.from] == 'message') {
+  else if (responses[msg.from] == 'message') {
     createImage(msg.body);
     let media = await MessageMedia.fromFilePath("./message1.png");
     await client.sendMessage(msg.from, media);
+    client.sendMessage(msg.from, 'Here you go! Just simply invoke me by sending *CNY* again. Or, just use *!CNY <message>* to create it seamlessly!');
+    responses[msg.from] = 'none';
     return;
   }
 
-  if (responses[msg.from] == 'angpow') {
+  else if (responses[msg.from] == 'angpow') {
     createAngpow(msg.body);
     let media = await MessageMedia.fromFilePath("./angpow1.png");
     await client.sendMessage(msg.from, media);
+    client.sendMessage(msg.from, 'Here you go! Just simply invoke me by sending *CNY* again. Or, just use *!QR <link>* to create it seamlessly!');
+    responses[msg.from] = 'none';
     return;
   }
 
