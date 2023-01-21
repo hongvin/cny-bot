@@ -71,7 +71,7 @@ client.on("message", async (msg) => {
     createImage(content);
     let media = await MessageMedia.fromFilePath("./message1.png");
     await client.sendMessage(msg.from, media);
-    debug.info('[MSG CARD SENT] ->',content);
+    debug.info('[MSG CARD SENT] ->', content);
     return;
   }
   else if (msg.body.startsWith("!QR")) {
@@ -79,7 +79,7 @@ client.on("message", async (msg) => {
     createAngpow(content);
     let media = await MessageMedia.fromFilePath("./angpow1.png");
     await client.sendMessage(msg.from, media);
-    debug.info('[QR CARD SENT] ->',content);
+    debug.info('[QR CARD SENT] ->', content);
     return;
   }
 
@@ -124,7 +124,7 @@ client.on("message", async (msg) => {
     let media = await MessageMedia.fromFilePath("./message1.png");
     await client.sendMessage(msg.from, media);
     client.sendMessage(msg.from, 'Here you go! Just simply invoke me by sending *CNY* again. Or, just use *!CNY <message>* to create it seamlessly!');
-    debug.info('[MSG CARD SENT] ->',msg.body);
+    debug.info('[MSG CARD SENT] ->', msg.body);
     responses[msg.from] = 'none';
     return;
   }
@@ -134,7 +134,7 @@ client.on("message", async (msg) => {
     let media = await MessageMedia.fromFilePath("./angpow1.png");
     await client.sendMessage(msg.from, media);
     client.sendMessage(msg.from, 'Here you go! Just simply invoke me by sending *CNY* again. Or, just use *!QR <link>* to create it seamlessly!');
-    debug.info('[QR CARD SENT] ->',msg.body);
+    debug.info('[QR CARD SENT] ->', msg.body);
     responses[msg.from] = 'none';
     return;
   }
@@ -165,8 +165,13 @@ function createImage(message) {
   img.onload = function () {
     context.drawImage(img, 0, 0);
     context.font = "bold 35pt Sofia Sans";
-    context.fillText(message, 100, 395);
-  };
+    if (message.includes('\n')) {
+      context.fillText(message, 100, 345);
+    }
+    else {
+      context.fillText(message, 100, 395);
+    }
+  }
   img.src = "./assets/message.png";
   fs.writeFileSync(`./message1.png`, imageCanvas.toBuffer("image/png"));
 }
